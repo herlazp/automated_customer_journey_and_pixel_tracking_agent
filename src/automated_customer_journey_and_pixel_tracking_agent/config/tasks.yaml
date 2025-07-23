@@ -2,10 +2,11 @@
 simulate_navigation_task:
   description: >
     Navigate to the {website_url}. If a {specific_flow} (e.g., 'Hipotecas') is provided,
-    locate this section in the main menu, click on it, and then navigate to and capture
-    views for all immediate child pages (one level deep) accessible from that section.
+    locate this section in the main menu, click on it, and then navigate to all immediate
+    child pages (one level deep) accessible from that section.
     After visiting a child page, return to the parent section page to explore other
-    child pages. If no specific flow is given, perform a general exploration by navigating
+    child pages, repeat that for up to {max_child_views} times. If no specific flow is given,
+    perform a general exploration by navigating
     to main sections and capturing views. Focus solely on tracking page views, not
     individual element clicks for pixel activation, but allow navigation via clicks
     to new pages, always returning to the original page after visiting a new one.

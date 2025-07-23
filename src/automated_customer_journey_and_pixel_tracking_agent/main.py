@@ -20,7 +20,7 @@ def run():
         'specific_flow': 'Hipotecas',
         'tracking_platforms': 'Adobe Analytics',
         'expected_pixels': '',
-        'max_clicks_per_view': 3 # Added new input for max clicks
+        'max_child_views': 5 # Added new input for max clicks
     }
     AutomatedCustomerJourneyAndPixelTrackingAgentCrew().crew().kickoff(inputs=inputs)
 
