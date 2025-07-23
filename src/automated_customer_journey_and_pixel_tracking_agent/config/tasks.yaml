@@ -41,17 +41,17 @@ generate_report_task:
     1. A summary table of 'Vendor' and 'Pixel ID' for all activations.
     2. A prominent section for the 'utag.js' full URL if it was loaded.
     3. A 'User Actions Analysis' section as provided.
-    **4. A concise interpretation of the generated CSV file, including:**
-       **- The total number of unique page views tracked.**
-       **- The name of the specific flow navigated (if {specific_flow} was provided).**
-       **- Confirmation that Adobe Analytics signals are being properly sent to the same report suite (by checking 'ns' or 's_account' parameters for consistency).**
-       **- Any other useful insights derived from the collected Adobe Analytics payload data.**
+    4. A concise interpretation of the generated CSV file, including:
+       - The total number of unique page views tracked.
+       - The name of the specific flow navigated (if {specific_flow} was provided).
+       - Confirmation that Adobe Analytics signals are being properly sent to the same report suite (by checking 'ns' or 's_account' parameters for consistency).
+       - Any other useful insights derived from the collected Adobe Analytics payload data.
     **Do NOT include any 'Recommendations for Optimization' in the Markdown report.**
     **Additionally, generate a single CSV file named 'pixel_payload_Adobe_Analytics_lacaixaes.csv' using the 'file_writer_tool'.**
     **This CSV file should have:**
-    **- Each row representing a unique Adobe Analytics page view.**
-    **- The first row as headers, consisting of 'Request Full URL', 'Page Name', 'Pixel ID', 'Type', and then all unique payload variable names (e.g., 'c1', 'v8', 'events') found across *all* Adobe Analytics view payloads.**
-    **- For each subsequent row (view), populate the columns with the corresponding values from its payload. If a variable is not present in a specific view's payload, leave the cell empty.**
+    **- The first row as headers. This header row MUST include 'Request Full URL', 'Page Name', 'Pixel ID', 'Type', followed by a UNION of ALL unique payload variable names found across *all* Adobe Analytics view payloads collected.**
+    **- Each subsequent row representing a unique Adobe Analytics page view.**
+    **- For each row (view), populate the columns with the corresponding values from its payload. If a variable is not present in a specific view's payload, leave the cell for that variable empty.**
     **- Ensure that the 'Request Full URL' column in the CSV does NOT contain line breaks and is a single, continuous URL.**
     **- Save this CSV file in the current working directory.**
   expected_output: The full Markdown report content (to be displayed in terminal) and the 'pixel_payload_Adobe_Analytics_lacaixaes.csv' file generated.
