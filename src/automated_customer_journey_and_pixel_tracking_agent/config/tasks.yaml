@@ -1,0 +1,61 @@
+---
+simulate_navigation_task:
+  description: >
+    Navigate to the {website_url}. If a {specific_flow} (e.g., 'Hipotecas') is provided,
+    locate this section in the main menu, click on it, and then navigate to and capture
+    views for all immediate child pages (one level deep) accessible from that section.
+    After visiting a child page, return to the parent section page to explore other
+    child pages. If no specific flow is given, perform a general exploration by navigating
+    to main sections and capturing views. Focus solely on tracking page views, not
+    individual element clicks for pixel activation, but allow navigation via clicks
+    to new pages, always returning to the original page after visiting a new one.
+    For every interaction, ensure to take page snapshots to identify interactive elements.
+  expected_output: A detailed log of page views and navigation paths on the website,
+    focusing on the specified flow if provided.
+  async_execution: false
+  agent: navigation_simulator
+track_pixels_task:
+  description: >
+    Intercept and track marketing pixel activations in real-time on {website_url} by inspecting network requests.
+    **Focus exclusively on Adobe Analytics pixels.** Look for requests to domains like 'metrics.caixabank.es'
+    or similar data collection servers, often containing '/b/ss/' in the path.
+    **Crucially, identify the actual data collection requests and distinguish them from pixel library/SDK loading requests.**
+    For each *actual Adobe Analytics pixel activation (view)*, extract the Vendor (always 'Adobe Analytics'),
+    the Pixel ID (e.g., from 's_account' or report suite ID), the Page Name (e.g., from 'pageName' parameter),
+    the full request URL, classify the Type as 'View', and **capture all available payload variables (query parameters)
+    as a flat JSON object.**
+    **The output of this task should be a JSON string containing a list of all identified Adobe Analytics pixel activations,
+    each with 'Vendor', 'Pixel ID', 'Page Name', 'Request Full URL', 'Type', and 'Payload Variables' (as a JSON object
+    containing all extracted query parameters). Also, include the full URL of the utag.js script if loaded, under a key like 'utag_js_url'.**
+    Filter out any console errors related to CSS or styling; only report pixel or analytics-related console messages.
+  expected_output: A JSON string containing a list of Adobe Analytics pixel activation data (with all payload variables) and the utag.js URL.
+  async_execution: false
+  agent: pixel_tracker
+  context:
+  - simulate_navigation_task
+generate_report_task:
+  description: >
+    **Analyze the JSON data provided by the 'track_pixels_task'.**
+    **Generate a detailed Markdown report as the primary output of this task, which will be displayed in the terminal.**
+    The Markdown report should include:
+    1. A summary table of 'Vendor' and 'Pixel ID' for all activations.
+    2. A prominent section for the 'utag.js' full URL if it was loaded.
+    3. A 'User Actions Analysis' section as provided.
+    **4. A concise interpretation of the generated CSV file, including:**
+       **- The total number of unique page views tracked.**
+       **- The name of the specific flow navigated (if {specific_flow} was provided).**
+       **- Confirmation that Adobe Analytics signals are being properly sent to the same report suite (by checking 'ns' or 's_account' parameters for consistency).**
+       **- Any other useful insights derived from the collected Adobe Analytics payload data.**
+    **Do NOT include any 'Recommendations for Optimization' in the Markdown report.**
+    **Additionally, generate a single CSV file named 'pixel_payload_Adobe_Analytics_lacaixaes.csv' using the 'file_writer_tool'.**
+    **This CSV file should have:**
+    **- Each row representing a unique Adobe Analytics page view.**
+    **- The first row as headers, consisting of 'Request Full URL', 'Page Name', 'Pixel ID', 'Type', and then all unique payload variable names (e.g., 'c1', 'v8', 'events') found across *all* Adobe Analytics view payloads.**
+    **- For each subsequent row (view), populate the columns with the corresponding values from its payload. If a variable is not present in a specific view's payload, leave the cell empty.**
+    **- Ensure that the 'Request Full URL' column in the CSV does NOT contain line breaks and is a single, continuous URL.**
+    **- Save this CSV file in the current working directory.**
+  expected_output: The full Markdown report content (to be displayed in terminal) and the 'pixel_payload_Adobe_Analytics_lacaixaes.csv' file generated.
+  async_execution: false
+  agent: pixel_tracker
+  context:
+  - track_pixels_task
